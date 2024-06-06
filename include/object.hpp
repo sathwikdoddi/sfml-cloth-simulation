@@ -18,7 +18,7 @@ struct VerletObject {
         acceleration = Vec2(0, 0);
 
         obj.setFillColor(sf::Color::White);
-        obj.setRadius(20);
+        obj.setRadius(3);
         obj.setOrigin(obj.getRadius(), obj.getRadius());
         obj.setOutlineThickness(2);
         obj.setOutlineColor(sf::Color::Black);
