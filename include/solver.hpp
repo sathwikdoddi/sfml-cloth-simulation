@@ -90,7 +90,7 @@ class Solver {
             initializeObjects();
         }
 
-        void renderObjects(sf::RenderWindow* target, float dt, sf::Vector2i mousePos = sf::Vector2i(0,0)) {
+        void renderObjects(sf::RenderWindow* target, float dt) {
             float sub_dt = dt / substeps;
 
             for (int s = 0; s < substeps; s++) {
@@ -110,8 +110,10 @@ class Solver {
                         }
                     }
                 }
-
-                removeAppropriateLinks(mousePos);
+                if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                    sf::Vector2i position = sf::Mouse::getPosition(*target);
+                    removeAppropriateLinks(position);
+                }
             }
         }
 
