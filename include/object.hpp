@@ -5,8 +5,9 @@
 typedef sf::Vector2f Vec2;
 
 struct VerletObject {
-    sf::CircleShape obj;
-    sf::Clock timer;
+    sf::CircleShape obj;    
+    std::vector<VerletObject*> links;
+
     bool immovable;
     Vec2 position_last;
     Vec2 position;
@@ -14,7 +15,6 @@ struct VerletObject {
     Vec2 acceleration;
 
     VerletObject(Vec2 pos = Vec2(500,500), bool imm = false) {
-        timer.restart();
         acceleration = Vec2(0, 0);
 
         obj.setFillColor(sf::Color::White);
@@ -39,6 +39,13 @@ struct VerletObject {
 
         acceleration = Vec2();
         obj.setPosition(position);
+    }
+    
+    bool isLinkedTo(VerletObject* object) {
+        for (int i = 0; i < links.size(); i++) {
+            if (links[i] == object) return true;
+        }
+        return false;
     }
 
     void accelerate(Vec2 a) {
