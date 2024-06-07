@@ -6,7 +6,7 @@ int main() {
     sf::RenderWindow window(sf::VideoMode(1000, 1000), "SFML Cloth Simulation");
     window.setFramerateLimit(60);
 
-    Solver solver;
+    Solver solver(window.getSize().x, window.getSize().y);
 
     while (window.isOpen()) {
         sf::Event event;
