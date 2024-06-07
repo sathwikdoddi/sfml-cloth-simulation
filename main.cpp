@@ -15,7 +15,12 @@ int main() {
         }
 
         window.clear();
-        solver.renderObjects(&window, 1 / 60.0);
+
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+            sf::Vector2i position = sf::Mouse::getPosition(window);
+            solver.renderObjects(&window, 1 / 60.0, position);
+        } else solver.renderObjects(&window, 1 / 60.0);
+
         window.display();
     }
 

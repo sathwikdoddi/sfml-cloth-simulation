@@ -32,14 +32,6 @@ class Solver {
             return line;
         }
 
-        void removeLink(VerletObject& obj1, VerletObject& obj2) {
-            for (int i = 0; i < obj1.links.size(); i++) {
-                if (obj1.links[i] == &obj2)  {
-                    obj1.links.erase(obj1.links.begin() + i);
-                }
-            }
-        }
-
         void initializeObjects() {
             VerletObject origin;
 
@@ -54,6 +46,14 @@ class Solver {
             }
         }
 
+        void removeLink(VerletObject& obj1, VerletObject& obj2) {
+            for (int i = 0; i < obj1.links.size(); i++) {
+                if (obj1.links[i] == &obj2)  {
+                    obj1.links.erase(obj1.links.begin() + i);
+                }
+            }
+        }
+
     public:
         Solver() {
             linkDistance = 20;
@@ -63,16 +63,44 @@ class Solver {
             initializeObjects();
         }
 
-        void renderObjects(sf::RenderWindow* target, float dt) {
+        void renderObjects(sf::RenderWindow* target, float dt, sf::Vector2i mousePos = sf::Vector2i(0,0)) {
             float sub_dt = dt / substeps;
 
             for (int s = 0; s < substeps; s++) {
                 for (int i = 0; i < objects.size(); i++) {
                     if (i < objects.size() - 1) target->draw(applyLink(objects[i], objects[i+1]));
+
                     target->draw(objects[i].obj);
                     if (!objects[i].immovable) {
                         objects[i].update(sub_dt);
                         objects[i].accelerate(Vec2(0, 1000));
+                    }
+                }
+                removeAppropriateLinks(mousePos);
+            }
+        }
+
+        void removeAppropriateLinks(sf::Vector2i mousePos) {
+            for (int i = 0; i < objects.size(); i++) {
+                VerletObject& obj1 = objects[i];
+
+                float mouse_x = mousePos.x;
+                float mouse_y = mousePos.y;
+                Vec2 mouse = Vec2(mouse_x, mouse_y);
+
+                Vec2 toMouse = obj1.position - mouse;
+                float d1 = pow(pow(toMouse.x, 2) + pow(toMouse.y, 2), 0.5);
+                Vec2 nToMouse = toMouse / d1;
+
+                for (int j = i+1; j < objects.size(); j++) {
+                    VerletObject& obj2 = objects[j];
+
+                    Vec2 toObj2 = obj1.position - obj2.position;
+                    float d2 = pow(pow(toObj2.x, 2) + pow(toObj2.y, 2), 0.5);
+                    Vec2 nToObj2 = toObj2 / d2;
+
+                    if (abs(nToMouse.x - nToObj2.x) <= 0.2 && abs(nToMouse.x - nToObj2.x) <= 0.2 && d1 < linkDistance) {
+                        removeLink(obj1, obj2);
                     }
                 }
             }
